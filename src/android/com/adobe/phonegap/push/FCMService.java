@@ -346,12 +346,13 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     String contentAvailable = extras.getString(CONTENT_AVAILABLE);
     String forceStart = extras.getString(FORCE_START);
     int badgeCount = extractBadgeCount(extras);
+    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    
     if (badgeCount >= 0) {
       Log.d(LOG_TAG, "count =[" + badgeCount + "]");
       PushPlugin.setApplicationIconBadgeNumber(context, badgeCount);
     }
     if (badgeCount == 0) {
-      NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
       mNotificationManager.cancelAll();
     }
 
@@ -369,6 +370,11 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
       }
 
       createNotification(context, extras);
+    } else { // hide notifications if notification with such ID already exists
+      int notId = parseInt(NOT_ID, extras);
+      Log.d(LOG_TAG, "hide notification: " + String.valueOf(notId));
+
+      mNotificationManager.cancel(getAppName(this), notId);
     }
 
     if (!PushPlugin.isActive() && "1".equals(forceStart)) {
