@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.security.SecureRandom;
+import javax.net.ssl.HttpsURLConnection;
 
 @SuppressLint("NewApi")
 public class FCMService extends FirebaseMessagingService implements PushConstants {
@@ -103,6 +104,17 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
 
       if (clearBadge) {
         PushPlugin.setApplicationIconBadgeNumber(getApplicationContext(), 0);
+      }
+
+      String receipt_URL = prefs.getString(RECEIPT_URL, null);
+      if (receipt_URL != null) {
+        try {
+          URL url = new URL(receipt_URL + message.getMessageId());
+          HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+          con.getResponseCode();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
 
       // if we are in the foreground and forceShow is `false` only send data

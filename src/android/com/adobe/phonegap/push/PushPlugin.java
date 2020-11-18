@@ -278,6 +278,12 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
               setApplicationIconBadgeNumber(getApplicationContext(), 0);
             }
 
+            String receiptURL = preferences.getString(RECEIPT_URL, null);
+            if (receiptURL != null) {
+              editor.putString(RECEIPT_URL, receiptURL);
+              Log.d(LOG_TAG, "Receipt URL set to: " + receiptURL);
+            }
+
             editor.putBoolean(SOUND, jo.optBoolean(SOUND, true));
             editor.putBoolean(VIBRATE, jo.optBoolean(VIBRATE, true));
             editor.putBoolean(CLEAR_BADGE, clearBadge);
